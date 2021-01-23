@@ -18,7 +18,7 @@ The source and target language is definable via the API.
 
 The Request is made as given below: 
 
-
+Type: GET
 {
 
 
@@ -63,4 +63,34 @@ output_text: the translated text
 
 output_lang: the language we want to convert the input text in
 
-This is the main task with normal caching and no smart precaching.  
+# Smart Caching
+
+
+This means we assume that if a user translates a text into Kannada, he is likely to also translate the same text to Hindi. Therefore we want to not only request Kannada from the external service but also other languages like Hindi, Tamil, etc. and store it in our cache. So for every request we translate to the following languages(some languages were trimmed down for reducing number of requests due to google translate limitation):
+
+
+{ 
+    'ar': 'Arabic',
+    'bn': 'Bengali',
+    'en': 'English',
+    'fr': 'French',
+    'de': 'German',
+    'gu': 'Gujarati',
+    'hi': 'Hindi',
+    'it': 'Italian',
+    'ja': 'Japanese',
+    'kn': 'Kannada',
+    'mr': 'Marathi',
+    'ta': 'Tamil',
+    'te': 'Telugu',
+    'ur': 'Urdu',
+    
+}
+
+Google translate API (in the free tier) gives error 429 if too many requests are made from a single API in a particular time span so I have used a proxy tunnel using a free proxy from the web. 
+
+
+The smart caching function runs asynchronously so that the API response time is not affected. 
+
+
+Finally the API was tested in Postman and verified
