@@ -3,8 +3,7 @@
 var express = require("express");
 var router = express.Router();
 const { translator } = require("../utility_functions/translatorUtil");
-var mysql = require("mysql");
-const { encache, check_in_cache } = require("../utility_functions/cachingUtil");
+const { encache, check_in_cache, smart_precaching } = require("../utility_functions/cachingUtil");
 
 router.get("/", function (req, res) {
   //check if in cache
@@ -24,6 +23,8 @@ router.get("/", function (req, res) {
           text: (await translator(req.body.from, req.body.text, req.body.to))
             .text,
         });
+        smart_precaching(req.body.from,req.body.text)
+
       } else {
         res.json({ text: result });
       }

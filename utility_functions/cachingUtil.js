@@ -1,3 +1,4 @@
+const { translator } = require("../utility_functions/translatorUtil");
 var mysql = require("mysql");
 var con = mysql.createConnection({
   host: "db4free.net",
@@ -8,10 +9,6 @@ var con = mysql.createConnection({
 con.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
-  // con.query(sql, function (err, result) {
-  //   if (err) throw err;
-  //   console.log("Result: " + result);
-  // });
 });
 
 function encache(input_from, input_text, input_to, output_text) {
@@ -30,6 +27,7 @@ function encache(input_from, input_text, input_to, output_text) {
     console.log("1 record inserted");
   });
 }
+
 function check_in_cache(input_from, input_text, input_to, callback) {
   con.query(
     'SELECT * FROM `cache` WHERE `input_text` = + "' +
@@ -52,4 +50,33 @@ function check_in_cache(input_from, input_text, input_to, callback) {
   );
 }
 
-module.exports = { check_in_cache, encache };
+async function smart_precaching(input_from, input_text){
+  var langs = {
+    'ar': 'Arabic',
+    'bn': 'Bengali',
+    'en': 'English',
+    'fr': 'French',
+    'de': 'German',
+    'gu': 'Gujarati',
+    'hi': 'Hindi',
+    'it': 'Italian',
+    'ja': 'Japanese',
+    'kn': 'Kannada',
+    'mr': 'Marathi',
+    'ta': 'Tamil',
+    'te': 'Telugu',
+    'ur': 'Urdu',
+    
+};
+for (let [key, value] of Object.entries(langs)) {
+  encache(
+    input_from,
+    input_text,
+    key,
+    (await translator(input_from,input_text,key)).text
+  );
+  console.log(value);
+}
+  
+}
+module.exports = { check_in_cache, encache, smart_precaching };
