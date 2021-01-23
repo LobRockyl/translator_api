@@ -1,10 +1,11 @@
 const { translator } = require("../utility_functions/translatorUtil");
+const {db_user,db_host,db_password,db_database} = require("../config/DB")
 var mysql = require("mysql");
 var con = mysql.createConnection({
-  host: "db4free.net",
-  user: "codeyoung",
-  password: "codeyoung",
-  database: "codeyoung",
+  host: db_host,
+  user: db_user,
+  password: db_password,
+  database: db_database,
 });
 con.connect(function (err) {
   if (err) throw err;
